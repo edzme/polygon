@@ -319,60 +319,6 @@ class SyncReferenceClient(base_client.BaseClient):
         # Return the final results, possibly reversed if sort order is 'desc'
         return final_results if sort == "asc" else OrderedDict(reversed(list(final_results.items())))
 
-
-    def get_bulk_ticker_details(
-        self,
-        symbol: str,
-        from_date=None,
-        to_date=None,
-        custom_dates: list = None,
-        run_parallel: bool = True,
-        warnings: bool = True,
-        sort="asc",
-        max_concurrent_workers: int = os.cpu_count() * 5,
-    ) -> OrderedDict:
-
-        if custom_dates is None:
-            if from_date is None or to_date is None:
-                raise ValueError("You must supply either custom_dates or (from_date and to_date)")
-            else:
-                all_dates = self.get_dates_between(from_date, to_date)
-        else:
-            custom_dates = [self.normalize_datetime(dt, output_type="date") for dt in custom_dates]
-            all_dates = sorted(list(set(custom_dates + self.get_dates_between(from_date, to_date))))
-
-        # Start off with the requests
-        futures, final_results, sort_order = OrderedDict(), OrderedDict(), self._change_enum(sort, str)
-
-        if run_parallel:  # parallel run
-            from concurrent.futures import ThreadPoolExecutor
-
-            with ThreadPoolExecutor(max_workers=max_concurrent_workers) as pool:
-                for dt in all_dates:
-                    futures[dt] = pool.submit(self.get_ticker_details, symbol, dt)
-
-            for future in futures:
-                try:
-                    data = futures[future].result()
-                except:
-                    if warnings:
-                        print(f"No data for {symbol} on {future}. response: {future.result()}")
-                    data = None
-
-                final_results[future] = data
-
-            return final_results if sort_order == "asc" else OrderedDict(reversed(list(final_results.items())))
-
-        # Sequential Run
-        for dt in all_dates:
-            try:
-                data = self.get_ticker_details(symbol, dt)
-                final_results[dt] = data
-            except:
-                final_results[dt] = None
-
-        return final_results if sort_order == "asc" else OrderedDict(reversed(list(final_results.items())))
-
     def get_option_contract(self, ticker: str, as_of_date=None, raw_response: bool = False):
         """
         get Info about an option contract
