@@ -37,7 +37,7 @@ def StocksClient(
                          data to be written/posted. Raises a ``WriteTimeout`` if unable to connect within the
                          specified time limit.
     """
-
+    print(f"StocksClient max_connections is {max_connections}")
     if not use_async:
         return SyncStocksClient(api_key, connect_timeout, read_timeout)
 
@@ -438,7 +438,7 @@ class SyncStocksClient(base_client.BaseClient):
         full_range: bool = False,
         run_parallel: bool = True,
         max_concurrent_workers: int = cpu_count() * 5,
-        warnings: bool = True,
+        warnings: bool = False,
         info: bool = True,
         high_volatility: bool = False,
         raw_response: bool = False,

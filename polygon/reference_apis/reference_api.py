@@ -40,6 +40,7 @@ def ReferenceClient(
                          data to be written/posted. Raises a ``WriteTimeout`` if unable to connect within the
                          specified time limit.
     """
+    print(f"ReferenceClient max_connections is {max_connections}")
 
     if not use_async:
         return SyncReferenceClient(api_key, connect_timeout, read_timeout)

@@ -9,6 +9,8 @@ import httpx
 import requests
 from httpx import Response as HttpxResponse
 from requests.models import Response
+from requests.adapters import HTTPAdapter
+
 
 # ========================================================= #
 
@@ -250,9 +252,25 @@ class BaseClient(Base):
         self.BASE = "https://api.polygon.io"
 
         self.time_out_conf = (connect_timeout, read_timeout)
-        self.session = requests.session()
+        self.session = self._init_session()
 
         self.session.headers.update({"Authorization": f"Bearer {self.KEY}"})
+
+
+
+    def _init_session(self):
+        """
+        Initialize the session with a larger connection pool.
+        """
+        session = requests.Session()
+        
+        # Configure the session to use an HTTPAdapter with a larger pool size
+        adapter = HTTPAdapter(pool_maxsize=10000)
+        session.mount('http://', adapter)
+        session.mount('https://', adapter)
+        
+        return session
+
 
     # Context Managers
     def __enter__(self):
