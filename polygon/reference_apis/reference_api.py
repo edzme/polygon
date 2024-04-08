@@ -3,6 +3,7 @@ from .. import base_client
 import os
 from collections import OrderedDict
 import asyncio
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 # ========================================================= #
 
@@ -39,6 +40,7 @@ def ReferenceClient(
                          data to be written/posted. Raises a ``WriteTimeout`` if unable to connect within the
                          specified time limit.
     """
+    print(f"ReferenceClient max_connections is {max_connections}")
 
     if not use_async:
         return SyncReferenceClient(api_key, connect_timeout, read_timeout)
@@ -237,6 +239,7 @@ class SyncReferenceClient(base_client.BaseClient):
 
         return self.to_json_safe(_res)
 
+
     def get_bulk_ticker_details(
         self,
         symbol: str,
@@ -270,7 +273,6 @@ class SyncReferenceClient(base_client.BaseClient):
                                        count * 5``
         :return: An OrderedDict where keys are dates, and values are corresponding ticker details.
         """
-
         if custom_dates is None:
             if from_date is None or to_date is None:
                 raise ValueError("You must supply either custom_dates or (from_date and to_date)")
@@ -280,37 +282,43 @@ class SyncReferenceClient(base_client.BaseClient):
             custom_dates = [self.normalize_datetime(dt, output_type="date") for dt in custom_dates]
             all_dates = sorted(list(set(custom_dates + self.get_dates_between(from_date, to_date))))
 
-        # Start off with the requests
-        futures, final_results, sort_order = OrderedDict(), OrderedDict(), self._change_enum(sort, str)
+        # Initialize the final results as an OrderedDict
+        final_results = OrderedDict()
 
         if run_parallel:  # parallel run
-            from concurrent.futures import ThreadPoolExecutor
-
             with ThreadPoolExecutor(max_workers=max_concurrent_workers) as pool:
-                for dt in all_dates:
-                    futures[dt] = pool.submit(self.get_ticker_details, symbol, dt)
+                # Submit all tasks and collect futures in a dictionary
+                futures = {pool.submit(self.get_ticker_details, symbol, dt): dt for dt in all_dates}
 
-            for future in futures:
+                # Iterate over the futures as they complete
+                for future in as_completed(futures):
+                    dt = futures[future]  # Get the date corresponding to this future
+                    try:
+                        # Attempt to get the result of the future
+                        data = future.result()
+                    except Exception as e:  # Catch any exceptions
+                        if warnings:
+                            print(f"No data for {symbol} on {dt}. Error: {str(e)}")
+                        data = None
+
+                    # Store the result or None in the final results
+                    final_results[dt] = data
+
+        else:  # Sequential run
+            for dt in all_dates:
                 try:
-                    data = futures[future].result()
-                except:
+                    # Synchronously get ticker details for each date
+                    data = self.get_ticker_details(symbol, dt)
+                except Exception as e:  # Catch any exceptions
                     if warnings:
-                        print(f"No data for {symbol} on {future}. response: {future.result()}")
+                        print(f"No data for {symbol} on {dt}. Error: {str(e)}")
                     data = None
 
-                final_results[future] = data
-
-            return final_results if sort_order == "asc" else OrderedDict(reversed(list(final_results.items())))
-
-        # Sequential Run
-        for dt in all_dates:
-            try:
-                data = self.get_ticker_details(symbol, dt)
+                # Store the result or None in the final results
                 final_results[dt] = data
-            except:
-                final_results[dt] = None
 
-        return final_results if sort_order == "asc" else OrderedDict(reversed(list(final_results.items())))
+        # Return the final results, possibly reversed if sort order is 'desc'
+        return final_results if sort == "asc" else OrderedDict(reversed(list(final_results.items())))
 
     def get_option_contract(self, ticker: str, as_of_date=None, raw_response: bool = False):
         """
