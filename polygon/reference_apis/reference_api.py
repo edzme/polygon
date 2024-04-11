@@ -520,7 +520,7 @@ class SyncReferenceClient(base_client.BaseClient):
 
         published_utc_gt = self.normalize_datetime(published_utc_gt)
 
-        published_utc_gte = self.normalize_datetime(published_utc_gte)
+        # published_utc_gte = self.normalize_datetime(published_utc_gte)
 
         sort, order = self._change_enum(sort, str), self._change_enum(order, str)
 
@@ -541,7 +541,7 @@ class SyncReferenceClient(base_client.BaseClient):
             "published_utc.gt": published_utc_gt,
             "published_utc.gte": published_utc_gte,
         }
-
+        
         _res = self._get_response(_path, params=_data)
 
         if not all_pages:  # don't you dare paginate!!

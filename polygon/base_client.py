@@ -522,14 +522,14 @@ class BaseClient(Base):
         :return: A single merged list of ALL candles/bars
         """
 
-        # if run_parallel and info:
-        #     print(
-        #         f"WARNING: Running with threading will spawn an internal ThreadPool to get responses in parallel. "
-        #         f"It is fine if you are not running a ThreadPool of your own. But If you are, know that only one "
-        #         f"pool will run at a time due to python GIL restriction. Other pool will wait. You can pass "
-        #         f"warnings=False to disable this warning OR pass run_parallel=False to disable running internal "
-        #         f"thread pool"
-        #     )
+        if run_parallel and warnings:
+            print(
+                f"WARNING: Running with threading will spawn an internal ThreadPool to get responses in parallel. "
+                f"It is fine if you are not running a ThreadPool of your own. But If you are, know that only one "
+                f"pool will run at a time due to python GIL restriction. Other pool will wait. You can pass "
+                f"warnings=False to disable this warning OR pass run_parallel=False to disable running internal "
+                f"thread pool"
+            )
         if (not run_parallel) and info:
             print(
                 f"WARNING: Running sequentially can take a lot of time especially if you are pulling minute/hour "
