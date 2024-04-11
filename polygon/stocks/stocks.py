@@ -71,7 +71,7 @@ class SyncStocksClient(base_client.BaseClient):
         reverse: bool = True,
         limit: int = 5000,
         raw_response: bool = False,
-        uppercase_symbol = False
+        uppercase_symbol = True
     ):
         """
         Get trades for a given ticker symbol on a specified date. The response from polygon seems to have a ``map``
@@ -227,7 +227,7 @@ class SyncStocksClient(base_client.BaseClient):
         reverse: bool = True,
         limit: int = 5000,
         raw_response: bool = False,
-        uppercase_symbol = False
+        uppercase_symbol = True
     ):
         """
         Get Quotes for a given ticker symbol on a specified date. The response from polygon seems to have a ``map``
@@ -358,7 +358,7 @@ class SyncStocksClient(base_client.BaseClient):
 
         return self._paginate(_res, merge_all_pages, max_pages, verbose=verbose, raw_page_responses=raw_page_responses)
 
-    def get_last_trade(self, symbol: str, raw_response: bool = False, uppercase_symbol = False):
+    def get_last_trade(self, symbol: str, raw_response: bool = False, uppercase_symbol = True):
         """
         Get the most recent trade for a given stock.
         `Official Docs <https://polygon.io/docs/stocks/get_v2_last_trade__stocksticker>`__
@@ -380,7 +380,7 @@ class SyncStocksClient(base_client.BaseClient):
 
         return self.to_json_safe(_res)
 
-    def get_last_quote(self, symbol: str, raw_response: bool = False, uppercase_symbol = False):
+    def get_last_quote(self, symbol: str, raw_response: bool = False, uppercase_symbol = True):
         """
         Get the most recent NBBO (Quote) tick for a given stock.
         `Official Docs <https://polygon.io/docs/stocks/get_v2_last_nbbo__stocksticker>`__
@@ -402,7 +402,7 @@ class SyncStocksClient(base_client.BaseClient):
 
         return self.to_json_safe(_res)
 
-    def get_daily_open_close(self, symbol: str, date, adjusted: bool = True, raw_response: bool = False, uppercase_symbol = False):
+    def get_daily_open_close(self, symbol: str, date, adjusted: bool = True, raw_response: bool = False, uppercase_symbol = True):
         """
         Get the OCHLV and after-hours prices of a stock symbol on a certain date.
         `Official Docs <https://polygon.io/docs/stocks/get_v1_open-close__stocksticker___date>`__
@@ -449,7 +449,7 @@ class SyncStocksClient(base_client.BaseClient):
         info: bool = True,
         high_volatility: bool = False,
         raw_response: bool = False,
-        uppercase_symbol = False
+        uppercase_symbol = True
     ):
         """
         Get aggregate bars for a stock over a given date range in custom time window sizes.
@@ -657,7 +657,7 @@ class SyncStocksClient(base_client.BaseClient):
 
         return self.to_json_safe(_res)
 
-    def get_previous_close(self, symbol: str, adjusted: bool = True, raw_response: bool = False, uppercase_symbol = False):
+    def get_previous_close(self, symbol: str, adjusted: bool = True, raw_response: bool = False, uppercase_symbol = True):
         """
         Get the previous day's OCHLV for the specified stock ticker.
         `Official Docs <https://polygon.io/docs/stocks/get_v2_aggs_ticker__stocksticker__prev>`__
@@ -683,7 +683,7 @@ class SyncStocksClient(base_client.BaseClient):
 
         return self.to_json_safe(_res)
 
-    def get_snapshot(self, symbol: str, raw_response: bool = False, uppercase_symbol = False):
+    def get_snapshot(self, symbol: str, raw_response: bool = False, uppercase_symbol = True):
         """
         Get the current minute, day, and previous day’s aggregate, as well as the last trade and quote for a single
         traded stock ticker.
@@ -728,7 +728,7 @@ class SyncStocksClient(base_client.BaseClient):
                 f"the data you requested. Response from the API: {_res}"
             )
 
-    def get_snapshot_all(self, symbols: list = None, raw_response: bool = False, uppercase_symbol = False):
+    def get_snapshot_all(self, symbols: list = None, raw_response: bool = False, uppercase_symbol = True):
         """
         Get the current minute, day, and previous day’s aggregate, as well as the last trade and quote for all traded
         stock symbols.
@@ -1164,7 +1164,7 @@ class AsyncStocksClient(base_client.BaseAsyncClient):
         reverse: bool = True,
         limit: int = 5000,
         raw_response: bool = False,
-        uppercase_symbol = False
+        uppercase_symbol = True
     ):
         """
         Get trades for a given ticker symbol on a specified date. The response from polygon seems to have a ``map``
@@ -1323,7 +1323,7 @@ class AsyncStocksClient(base_client.BaseAsyncClient):
         reverse: bool = True,
         limit: int = 5000,
         raw_response: bool = False,
-        uppercase_symbol = False
+        uppercase_symbol = True
     ):
         """
         Get Quotes for a given ticker symbol on a specified date. The response from polygon seems to have a ``map``
@@ -1456,7 +1456,7 @@ class AsyncStocksClient(base_client.BaseAsyncClient):
             _res, merge_all_pages, max_pages, verbose=verbose, raw_page_responses=raw_page_responses
         )
 
-    async def get_last_trade(self, symbol: str, raw_response: bool = False, uppercase_symbol = False):
+    async def get_last_trade(self, symbol: str, raw_response: bool = False, uppercase_symbol = True):
         """
         Get the most recent trade for a given stock - Async method
         `Official Docs <https://polygon.io/docs/stocks/get_v2_last_trade__stocksticker>`__
@@ -1477,7 +1477,7 @@ class AsyncStocksClient(base_client.BaseAsyncClient):
 
         return self.to_json_safe(_res)
 
-    async def get_last_quote(self, symbol: str, raw_response: bool = False, uppercase_symbol = False):
+    async def get_last_quote(self, symbol: str, raw_response: bool = False, uppercase_symbol = True):
         """
         Get the most recent NBBO (Quote) tick for a given stock - Async method
         `Official Docs <https://polygon.io/docs/stocks/get_v2_last_nbbo__stocksticker>`__
@@ -1499,7 +1499,7 @@ class AsyncStocksClient(base_client.BaseAsyncClient):
 
         return self.to_json_safe(_res)
 
-    async def get_daily_open_close(self, symbol: str, date, adjusted: bool = True, raw_response: bool = False, uppercase_symbol = False):
+    async def get_daily_open_close(self, symbol: str, date, adjusted: bool = True, raw_response: bool = False, uppercase_symbol = True):
         """
         Get the OCHLV and after-hours prices of a stock symbol on a certain date - Async method
         `Official Docs <https://polygon.io/docs/stocks/get_v1_open-close__stocksticker___date>`__
@@ -1546,7 +1546,7 @@ class AsyncStocksClient(base_client.BaseAsyncClient):
         info: bool = True,
         high_volatility: bool = False,
         raw_response: bool = False,
-        uppercase_symbol = False
+        uppercase_symbol = True
     ):
         """
         Get aggregate bars for a stock over a given date range in custom time window sizes.
@@ -1754,7 +1754,7 @@ class AsyncStocksClient(base_client.BaseAsyncClient):
 
         return self.to_json_safe(_res)
 
-    async def get_previous_close(self, symbol: str, adjusted: bool = True, raw_response: bool = False, uppercase_symbol = False):
+    async def get_previous_close(self, symbol: str, adjusted: bool = True, raw_response: bool = False, uppercase_symbol = True):
         """
         Get the previous day's OCHLV for the specified stock ticker - Async method
         `Official Docs <https://polygon.io/docs/stocks/get_v2_aggs_ticker__stocksticker__prev>`__
@@ -1780,7 +1780,7 @@ class AsyncStocksClient(base_client.BaseAsyncClient):
 
         return self.to_json_safe(_res)
 
-    async def get_snapshot(self, symbol: str, raw_response: bool = False, uppercase_symbol = False):
+    async def get_snapshot(self, symbol: str, raw_response: bool = False, uppercase_symbol = True):
         """
         Get the current minute, day, and previous day’s aggregate, as well as the last trade and quote for a single
         traded stock ticker - Async method
@@ -1819,7 +1819,7 @@ class AsyncStocksClient(base_client.BaseAsyncClient):
 
         return _res["results"]["p"]
 
-    async def get_snapshot_all(self, symbols: list = None, raw_response: bool = False, uppercase_symbol = False):
+    async def get_snapshot_all(self, symbols: list = None, raw_response: bool = False, uppercase_symbol = True):
         """
         Get the current minute, day, and previous day’s aggregate, as well as the last trade and quote for all traded
         stock symbols - Async method
