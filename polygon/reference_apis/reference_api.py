@@ -210,7 +210,7 @@ class SyncReferenceClient(base_client.BaseClient):
 
         return self.to_json_safe(_res)
 
-    def get_ticker_details(self, symbol: str, date=None, raw_response: bool = False):
+    def get_ticker_details(self, symbol: str, date=None, raw_response: bool = False, uppercase_symbol = True):
         """
         Get a single ticker supported by Polygon.io. This response will have detailed information about the ticker and
         the company behind it.
@@ -228,7 +228,8 @@ class SyncReferenceClient(base_client.BaseClient):
 
         date = self.normalize_datetime(date, output_type="str")
 
-        _path = f"/v3/reference/tickers/{symbol.upper()}"
+        symbol = symbol.upper() if uppercase_symbol else symbol
+        _path = f"/v3/reference/tickers/{symbol}"
 
         _data = {"date": date}
 
@@ -1312,7 +1313,7 @@ class AsyncReferenceClient(base_client.BaseAsyncClient):
 
         return self.to_json_safe(_res)
 
-    async def get_ticker_details(self, symbol: str, date=None, raw_response: bool = False):
+    async def get_ticker_details(self, symbol: str, date=None, raw_response: bool = False, uppercase_symbol = True):
         """
         Get a single ticker supported by Polygon.io. This response will have detailed information about the ticker and
         the company behind it.
@@ -1330,7 +1331,8 @@ class AsyncReferenceClient(base_client.BaseAsyncClient):
 
         date = self.normalize_datetime(date, output_type="str")
 
-        _path = f"/v3/reference/tickers/{symbol.upper()}"
+        symbol = symbol.upper() if uppercase_symbol else symbol
+        _path = f"/v3/reference/tickers/{symbol}"
 
         _data = {"date": date}
 

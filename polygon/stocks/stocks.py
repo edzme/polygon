@@ -71,6 +71,7 @@ class SyncStocksClient(base_client.BaseClient):
         reverse: bool = True,
         limit: int = 5000,
         raw_response: bool = False,
+        uppercase_symbol = False
     ):
         """
         Get trades for a given ticker symbol on a specified date. The response from polygon seems to have a ``map``
@@ -95,7 +96,8 @@ class SyncStocksClient(base_client.BaseClient):
         date = self.normalize_datetime(date, output_type="str")
         timestamp = self.normalize_datetime(timestamp)
 
-        _path = f"/v2/ticks/stocks/trades/{symbol.upper()}/{date}"
+        symbol = symbol.upper() if uppercase_symbol else symbol
+        _path = f"/v2/ticks/stocks/trades/{symbol}/{date}"
 
         _data = {
             "timestamp": timestamp,
@@ -225,6 +227,7 @@ class SyncStocksClient(base_client.BaseClient):
         reverse: bool = True,
         limit: int = 5000,
         raw_response: bool = False,
+        uppercase_symbol = False
     ):
         """
         Get Quotes for a given ticker symbol on a specified date. The response from polygon seems to have a ``map``
@@ -248,7 +251,8 @@ class SyncStocksClient(base_client.BaseClient):
         date = self.normalize_datetime(date, output_type="str")
         timestamp = self.normalize_datetime(timestamp)
 
-        _path = f"/v2/ticks/stocks/nbbo/{symbol.upper()}/{date}"
+        symbol = symbol.upper() if uppercase_symbol else symbol
+        _path = f"/v2/ticks/stocks/nbbo/{symbol}/{date}"
 
         _data = {
             "timestamp": timestamp,
@@ -354,7 +358,7 @@ class SyncStocksClient(base_client.BaseClient):
 
         return self._paginate(_res, merge_all_pages, max_pages, verbose=verbose, raw_page_responses=raw_page_responses)
 
-    def get_last_trade(self, symbol: str, raw_response: bool = False):
+    def get_last_trade(self, symbol: str, raw_response: bool = False, uppercase_symbol = False):
         """
         Get the most recent trade for a given stock.
         `Official Docs <https://polygon.io/docs/stocks/get_v2_last_trade__stocksticker>`__
@@ -366,7 +370,8 @@ class SyncStocksClient(base_client.BaseClient):
         :return: A JSON decoded Dictionary by default. Make ``raw_response=True`` to get underlying response object
         """
 
-        _path = f"/v2/last/trade/{symbol.upper()}"
+        symbol = symbol.upper() if uppercase_symbol else symbol
+        _path = f"/v2/last/trade/{symbol}"
 
         _res = self._get_response(_path)
 
@@ -375,7 +380,7 @@ class SyncStocksClient(base_client.BaseClient):
 
         return self.to_json_safe(_res)
 
-    def get_last_quote(self, symbol: str, raw_response: bool = False):
+    def get_last_quote(self, symbol: str, raw_response: bool = False, uppercase_symbol = False):
         """
         Get the most recent NBBO (Quote) tick for a given stock.
         `Official Docs <https://polygon.io/docs/stocks/get_v2_last_nbbo__stocksticker>`__
@@ -387,7 +392,8 @@ class SyncStocksClient(base_client.BaseClient):
         :return: A JSON decoded Dictionary by default. Make ``raw_response=True`` to get underlying response object
         """
 
-        _path = f"/v2/last/nbbo/{symbol.upper()}"
+        symbol = symbol.upper() if uppercase_symbol else symbol
+        _path = f"/v2/last/nbbo/{symbol}"
 
         _res = self._get_response(_path)
 
@@ -396,7 +402,7 @@ class SyncStocksClient(base_client.BaseClient):
 
         return self.to_json_safe(_res)
 
-    def get_daily_open_close(self, symbol: str, date, adjusted: bool = True, raw_response: bool = False):
+    def get_daily_open_close(self, symbol: str, date, adjusted: bool = True, raw_response: bool = False, uppercase_symbol = False):
         """
         Get the OCHLV and after-hours prices of a stock symbol on a certain date.
         `Official Docs <https://polygon.io/docs/stocks/get_v1_open-close__stocksticker___date>`__
@@ -414,7 +420,8 @@ class SyncStocksClient(base_client.BaseClient):
 
         date = self.normalize_datetime(date, output_type="str")
 
-        _path = f"/v1/open-close/{symbol.upper()}/{date}"
+        symbol = symbol.upper() if uppercase_symbol else symbol
+        _path = f"/v1/open-close/{symbol}/{date}"
 
         _data = {"adjusted": "true" if adjusted else "false"}
 
@@ -442,6 +449,7 @@ class SyncStocksClient(base_client.BaseClient):
         info: bool = True,
         high_volatility: bool = False,
         raw_response: bool = False,
+        uppercase_symbol = False
     ):
         """
         Get aggregate bars for a stock over a given date range in custom time window sizes.
@@ -494,7 +502,8 @@ class SyncStocksClient(base_client.BaseClient):
 
             timespan, sort = self._change_enum(timespan, str), self._change_enum(sort, str)
 
-            _path = f"/v2/aggs/ticker/{symbol.upper()}/range/{multiplier}/{timespan}/{from_date}/{to_date}"
+            symbol = symbol.upper() if uppercase_symbol else symbol
+            _path = f"/v2/aggs/ticker/{symbol}/range/{multiplier}/{timespan}/{from_date}/{to_date}"
 
             _data = {"adjusted": "true" if adjusted else "false", "sort": sort, "limit": limit}
 
@@ -648,7 +657,7 @@ class SyncStocksClient(base_client.BaseClient):
 
         return self.to_json_safe(_res)
 
-    def get_previous_close(self, symbol: str, adjusted: bool = True, raw_response: bool = False):
+    def get_previous_close(self, symbol: str, adjusted: bool = True, raw_response: bool = False, uppercase_symbol = False):
         """
         Get the previous day's OCHLV for the specified stock ticker.
         `Official Docs <https://polygon.io/docs/stocks/get_v2_aggs_ticker__stocksticker__prev>`__
@@ -662,7 +671,8 @@ class SyncStocksClient(base_client.BaseClient):
         :return: A JSON decoded Dictionary by default. Make ``raw_response=True`` to get underlying response object
         """
 
-        _path = f"/v2/aggs/ticker/{symbol.upper()}/prev"
+        symbol = symbol.upper() if uppercase_symbol else symbol
+        _path = f"/v2/aggs/ticker/{symbol}/prev"
 
         _data = {"adjusted": "true" if adjusted else "false"}
 
@@ -673,7 +683,7 @@ class SyncStocksClient(base_client.BaseClient):
 
         return self.to_json_safe(_res)
 
-    def get_snapshot(self, symbol: str, raw_response: bool = False):
+    def get_snapshot(self, symbol: str, raw_response: bool = False, uppercase_symbol = False):
         """
         Get the current minute, day, and previous day’s aggregate, as well as the last trade and quote for a single
         traded stock ticker.
@@ -687,7 +697,8 @@ class SyncStocksClient(base_client.BaseClient):
         :return: A JSON decoded Dictionary by default. Make ``raw_response=True`` to get underlying response object
         """
 
-        _path = f"/v2/snapshot/locale/us/markets/stocks/tickers/{symbol.upper()}"
+        symbol = symbol.upper() if uppercase_symbol else symbol
+        _path = f"/v2/snapshot/locale/us/markets/stocks/tickers/{symbol}"
 
         _res = self._get_response(_path)
 
@@ -717,7 +728,7 @@ class SyncStocksClient(base_client.BaseClient):
                 f"the data you requested. Response from the API: {_res}"
             )
 
-    def get_snapshot_all(self, symbols: list = None, raw_response: bool = False):
+    def get_snapshot_all(self, symbols: list = None, raw_response: bool = False, uppercase_symbol = False):
         """
         Get the current minute, day, and previous day’s aggregate, as well as the last trade and quote for all traded
         stock symbols.
@@ -733,7 +744,7 @@ class SyncStocksClient(base_client.BaseClient):
         _path = f"/v2/snapshot/locale/us/markets/stocks/tickers"
 
         if symbols is not None:
-            _data = {"tickers": ",".join([x.upper() for x in symbols])}
+            _data = {"tickers": ",".join([x.upper() if uppercase_symbol else x for x in symbols])}
         else:
             _data = {"tickers": None}
 
@@ -1153,6 +1164,7 @@ class AsyncStocksClient(base_client.BaseAsyncClient):
         reverse: bool = True,
         limit: int = 5000,
         raw_response: bool = False,
+        uppercase_symbol = False
     ):
         """
         Get trades for a given ticker symbol on a specified date. The response from polygon seems to have a ``map``
@@ -1177,7 +1189,8 @@ class AsyncStocksClient(base_client.BaseAsyncClient):
         date = self.normalize_datetime(date, output_type="str")
         timestamp = self.normalize_datetime(timestamp)
 
-        _path = f"/v2/ticks/stocks/trades/{symbol.upper()}/{date}"
+        symbol = symbol.upper() if uppercase_symbol else symbol
+        _path = f"/v2/ticks/stocks/trades/{symbol}/{date}"
 
         _data = {
             "timestamp": timestamp,
@@ -1310,6 +1323,7 @@ class AsyncStocksClient(base_client.BaseAsyncClient):
         reverse: bool = True,
         limit: int = 5000,
         raw_response: bool = False,
+        uppercase_symbol = False
     ):
         """
         Get Quotes for a given ticker symbol on a specified date. The response from polygon seems to have a ``map``
@@ -1333,7 +1347,8 @@ class AsyncStocksClient(base_client.BaseAsyncClient):
         date = self.normalize_datetime(date, output_type="str")
         timestamp = self.normalize_datetime(timestamp)
 
-        _path = f"/v2/ticks/stocks/nbbo/{symbol.upper()}/{date}"
+        symbol = symbol.upper() if uppercase_symbol else symbol
+        _path = f"/v2/ticks/stocks/nbbo/{symbol}/{date}"
 
         _data = {
             "timestamp": timestamp,
@@ -1441,7 +1456,7 @@ class AsyncStocksClient(base_client.BaseAsyncClient):
             _res, merge_all_pages, max_pages, verbose=verbose, raw_page_responses=raw_page_responses
         )
 
-    async def get_last_trade(self, symbol: str, raw_response: bool = False):
+    async def get_last_trade(self, symbol: str, raw_response: bool = False, uppercase_symbol = False):
         """
         Get the most recent trade for a given stock - Async method
         `Official Docs <https://polygon.io/docs/stocks/get_v2_last_trade__stocksticker>`__
@@ -1452,8 +1467,8 @@ class AsyncStocksClient(base_client.BaseAsyncClient):
                              dictionary.
         :return: A JSON decoded Dictionary by default. Make ``raw_response=True`` to get underlying response object
         """
-
-        _path = f"/v2/last/trade/{symbol.upper()}"
+        symbol = symbol.upper() if uppercase_symbol else symbol
+        _path = f"/v2/last/trade/{symbol}"
 
         _res = await self._get_response(_path)
 
@@ -1462,7 +1477,7 @@ class AsyncStocksClient(base_client.BaseAsyncClient):
 
         return self.to_json_safe(_res)
 
-    async def get_last_quote(self, symbol: str, raw_response: bool = False):
+    async def get_last_quote(self, symbol: str, raw_response: bool = False, uppercase_symbol = False):
         """
         Get the most recent NBBO (Quote) tick for a given stock - Async method
         `Official Docs <https://polygon.io/docs/stocks/get_v2_last_nbbo__stocksticker>`__
@@ -1474,7 +1489,8 @@ class AsyncStocksClient(base_client.BaseAsyncClient):
         :return: A JSON decoded Dictionary by default. Make ``raw_response=True`` to get underlying response object
         """
 
-        _path = f"/v2/last/nbbo/{symbol.upper()}"
+        symbol = symbol.upper() if uppercase_symbol else symbol
+        _path = f"/v2/last/nbbo/{symbol}"
 
         _res = await self._get_response(_path)
 
@@ -1483,7 +1499,7 @@ class AsyncStocksClient(base_client.BaseAsyncClient):
 
         return self.to_json_safe(_res)
 
-    async def get_daily_open_close(self, symbol: str, date, adjusted: bool = True, raw_response: bool = False):
+    async def get_daily_open_close(self, symbol: str, date, adjusted: bool = True, raw_response: bool = False, uppercase_symbol = False):
         """
         Get the OCHLV and after-hours prices of a stock symbol on a certain date - Async method
         `Official Docs <https://polygon.io/docs/stocks/get_v1_open-close__stocksticker___date>`__
@@ -1501,7 +1517,8 @@ class AsyncStocksClient(base_client.BaseAsyncClient):
 
         date = self.normalize_datetime(date, output_type="str")
 
-        _path = f"/v1/open-close/{symbol.upper()}/{date}"
+        symbol = symbol.upper() if uppercase_symbol else symbol
+        _path = f"/v1/open-close/{symbol}/{date}"
 
         _data = {"adjusted": "true" if adjusted else "false"}
 
@@ -1529,6 +1546,7 @@ class AsyncStocksClient(base_client.BaseAsyncClient):
         info: bool = True,
         high_volatility: bool = False,
         raw_response: bool = False,
+        uppercase_symbol = False
     ):
         """
         Get aggregate bars for a stock over a given date range in custom time window sizes.
@@ -1581,7 +1599,8 @@ class AsyncStocksClient(base_client.BaseAsyncClient):
 
             timespan, sort = self._change_enum(timespan, str), self._change_enum(sort, str)
 
-            _path = f"/v2/aggs/ticker/{symbol.upper()}/range/{multiplier}/{timespan}/{from_date}/{to_date}"
+            symbol = symbol.upper() if uppercase_symbol else symbol
+            _path = f"/v2/aggs/ticker/{symbol}/range/{multiplier}/{timespan}/{from_date}/{to_date}"
 
             _data = {"adjusted": "true" if adjusted else "false", "sort": sort, "limit": limit}
 
@@ -1735,7 +1754,7 @@ class AsyncStocksClient(base_client.BaseAsyncClient):
 
         return self.to_json_safe(_res)
 
-    async def get_previous_close(self, symbol: str, adjusted: bool = True, raw_response: bool = False):
+    async def get_previous_close(self, symbol: str, adjusted: bool = True, raw_response: bool = False, uppercase_symbol = False):
         """
         Get the previous day's OCHLV for the specified stock ticker - Async method
         `Official Docs <https://polygon.io/docs/stocks/get_v2_aggs_ticker__stocksticker__prev>`__
@@ -1749,7 +1768,8 @@ class AsyncStocksClient(base_client.BaseAsyncClient):
         :return: A JSON decoded Dictionary by default. Make ``raw_response=True`` to get underlying response object
         """
 
-        _path = f"/v2/aggs/ticker/{symbol.upper()}/prev"
+        symbol = symbol.upper() if uppercase_symbol else symbol
+        _path = f"/v2/aggs/ticker/{symbol}/prev"
 
         _data = {"adjusted": "true" if adjusted else "false"}
 
@@ -1760,7 +1780,7 @@ class AsyncStocksClient(base_client.BaseAsyncClient):
 
         return self.to_json_safe(_res)
 
-    async def get_snapshot(self, symbol: str, raw_response: bool = False):
+    async def get_snapshot(self, symbol: str, raw_response: bool = False, uppercase_symbol = False):
         """
         Get the current minute, day, and previous day’s aggregate, as well as the last trade and quote for a single
         traded stock ticker - Async method
@@ -1774,7 +1794,8 @@ class AsyncStocksClient(base_client.BaseAsyncClient):
         :return: A JSON decoded Dictionary by default. Make ``raw_response=True`` to get underlying response object
         """
 
-        _path = f"/v2/snapshot/locale/us/markets/stocks/tickers/{symbol.upper()}"
+        symbol = symbol.upper() if uppercase_symbol else symbol
+        _path = f"/v2/snapshot/locale/us/markets/stocks/tickers/{symbol}"
 
         _res = await self._get_response(_path)
 
@@ -1798,7 +1819,7 @@ class AsyncStocksClient(base_client.BaseAsyncClient):
 
         return _res["results"]["p"]
 
-    async def get_snapshot_all(self, symbols: list = None, raw_response: bool = False):
+    async def get_snapshot_all(self, symbols: list = None, raw_response: bool = False, uppercase_symbol = False):
         """
         Get the current minute, day, and previous day’s aggregate, as well as the last trade and quote for all traded
         stock symbols - Async method
@@ -1814,7 +1835,7 @@ class AsyncStocksClient(base_client.BaseAsyncClient):
         _path = f"/v2/snapshot/locale/us/markets/stocks/tickers"
 
         if symbols is not None:
-            _data = {"tickers": ",".join([x.upper() for x in symbols])}
+            _data = {"tickers": ",".join([x.upper() if uppercase_symbol else x for x in symbols])}
         else:
             _data = {"tickers": None}
 
