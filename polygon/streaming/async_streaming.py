@@ -406,8 +406,8 @@ class AsyncStreamClient:
         :param force_uppercase_symbols: Set to ``False`` if you don't want the library to make all symbols upper case
         :return: None
         """
-        print('ATTMPT SUBSCRIBE')
-        print(f'symbols: {symbols}, action: {action}, _prefix: {_prefix}, forceupper: {force_uppercase_symbols}')
+        # print('ATTMPT SUBSCRIBE')
+        # print(f'symbols: {symbols}, action: {action}, _prefix: {_prefix}, forceupper: {force_uppercase_symbols}')
 
         if not self._auth:
             await self.login()
@@ -436,7 +436,7 @@ class AsyncStreamClient:
 
         self._subs.append((symbols, action))
         _payload = '{"action":"%s", "params":"%s"}' % (action.lower(), symbols)
-        print(f'sending payload: {_payload}')
+        print(f'sending subscribe payload: {_payload}')
         await self.WS.send(str(_payload))
 
     # STOCK Streams
